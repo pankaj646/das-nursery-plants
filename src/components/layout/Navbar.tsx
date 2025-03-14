@@ -4,7 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingCart, Home, Leaf, PhoneCall } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const Navbar = () => {
+interface NavbarProps {
+  cartItemsCount?: number;
+}
+
+const Navbar = ({ cartItemsCount = 0 }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -72,6 +76,11 @@ const Navbar = () => {
             >
               <ShoppingCart className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300" />
               <span className="hidden sm:inline">Cart</span>
+              {cartItemsCount > 0 && (
+                <span className="ml-1 bg-leaf-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartItemsCount}
+                </span>
+              )}
             </Button>
           </Link>
 
@@ -121,6 +130,11 @@ const Navbar = () => {
             onClick={closeMenu}
           >
             <ShoppingCart className="h-5 w-5" /> Cart
+            {cartItemsCount > 0 && (
+              <span className="ml-1 bg-leaf-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItemsCount}
+              </span>
+            )}
           </Link>
         </nav>
       </div>
