@@ -48,7 +48,7 @@ const Cart = () => {
     });
   };
   
-  const handleCheckout = (address: string, phone: string) => {
+  const handleCheckout = (name: string, address: string, phone: string) => {
     // Format the order message for WhatsApp
     const orderItems = cartItems.map(item => {
       const originalPrice = item.discountPercentage > 0 
@@ -69,6 +69,7 @@ const Cart = () => {
     
     const orderMessage = `
 🛒 Order from Das Nursery
+👤 Customer Name: ${name}
 🌿 Items Ordered:
 ${orderItems}
 💰 Total Price: ₹${subtotal}

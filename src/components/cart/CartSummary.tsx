@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ShoppingBag, BadgePercent, TruckIcon } from 'lucide-react';
+import { ShoppingBag, TruckIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CartProduct } from './CartItem';
@@ -8,29 +8,21 @@ import { Separator } from '@/components/ui/separator';
 
 interface CartSummaryProps {
   cartItems: CartProduct[];
-  onCheckout: (address: string, phone: string) => void;
+  onCheckout: (name: string, address: string, phone: string) => void;
 }
 
 const CartSummary = ({ cartItems, onCheckout }: CartSummaryProps) => {
+  const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
-  const [couponCode, setCouponCode] = useState('');
-  const [isCouponApplied, setIsCouponApplied] = useState(false);
   
   // Calculate cart totals
   const subtotal = cartItems.reduce((total, item) => total + (item.discountedPrice * item.quantity), 0);
-  const couponDiscount = isCouponApplied ? subtotal * 0.1 : 0; // 10% discount with coupon
   const deliveryCharge = subtotal > 500 ? 0 : 50;
-  const total = subtotal - couponDiscount + deliveryCharge;
-  
-  const handleApplyCoupon = () => {
-    if (couponCode.toLowerCase() === 'plants10') {
-      setIsCouponApplied(true);
-    }
-  };
+  const total = subtotal + deliveryCharge;
   
   const handleCheckout = () => {
-    onCheckout(address, phone);
+    onCheckout(name, address, phone);
   };
   
   return (
@@ -54,48 +46,12 @@ const CartSummary = ({ cartItems, onCheckout }: CartSummaryProps) => {
       
       <Separator className="my-4" />
       
-      {/* Coupon code */}
-      <div className="mb-6">
-        <label className="text-sm font-medium flex items-center gap-2 mb-2">
-          <BadgePercent className="h-4 w-4 text-forest" />
-          Apply Coupon
-        </label>
-        <div className="flex gap-2">
-          <Input 
-            placeholder="PLANTS10"
-            value={couponCode}
-            onChange={(e) => setCouponCode(e.target.value)}
-            disabled={isCouponApplied}
-            className="border-gray-200 focus:border-forest"
-          />
-          <Button 
-            variant="outline"
-            size="sm"
-            onClick={handleApplyCoupon}
-            disabled={isCouponApplied || !couponCode}
-            className="whitespace-nowrap border-forest text-forest hover:bg-forest hover:text-white"
-          >
-            Apply
-          </Button>
-        </div>
-        {isCouponApplied && (
-          <p className="text-green-600 text-xs mt-1">Coupon applied successfully!</p>
-        )}
-      </div>
-      
       {/* Pricing breakdown */}
       <div className="space-y-3 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-600">Subtotal</span>
           <span>₹{subtotal}</span>
         </div>
-        
-        {isCouponApplied && (
-          <div className="flex justify-between text-green-600">
-            <span>Coupon Discount</span>
-            <span>-₹{couponDiscount}</span>
-          </div>
-        )}
         
         <div className="flex justify-between items-center">
           <span className="text-gray-600 flex items-center gap-1">
@@ -127,6 +83,15 @@ const CartSummary = ({ cartItems, onCheckout }: CartSummaryProps) => {
       {/* Delivery details */}
       <div className="space-y-4 mb-6">
         <div>
+          <label className="text-sm font-medium mb-1 block">Full Name</label>
+          <Input
+            placeholder="Enter your full name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border-gray-200"
+          />
+        </div>
+        <div>
           <label className="text-sm font-medium mb-1 block">Delivery Address</label>
           <Input
             placeholder="Enter your full address"
@@ -150,7 +115,7 @@ const CartSummary = ({ cartItems, onCheckout }: CartSummaryProps) => {
       {/* Checkout button */}
       <Button 
         className="w-full bg-forest hover:bg-forest/90"
-        disabled={cartItems.length === 0 || !address || !phone}
+        disabled={cartItems.length === 0 || !name || !address || !phone}
         onClick={handleCheckout}
       >
         Place Order via WhatsApp

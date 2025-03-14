@@ -1,11 +1,14 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Filter } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/shared/WhatsAppButton';
 import ProductCard, { Product } from '@/components/products/ProductCard';
 import { CartProduct } from '@/components/cart/CartItem';
 import { toast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 // Mock products data
 const allProducts: Product[] = [
@@ -175,7 +178,7 @@ const allProducts: Product[] = [
 ];
 
 const Products = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
   const [cart, setCart] = useState<CartProduct[]>([]);
@@ -233,6 +236,28 @@ const Products = () => {
       });
     }
   };
+
+  const handleDirectOrder = (product: Product) => {
+    // Format direct order message for WhatsApp
+    const orderMessage = `
+🌿 I'd like to order:
+${product.name} - ${product.discountPercentage > 0 ? `~~₹${product.originalPrice}~~ ` : ''}₹${product.discountedPrice} ${product.discountPercentage > 0 ? `(${product.discountPercentage}% OFF)` : ''}
+
+Please provide details for delivery.
+    `;
+    
+    // Generate WhatsApp URL
+    const phoneNumber = '+919876543210'; // Replace with actual WhatsApp number
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(orderMessage.trim())}`;
+    
+    // Open WhatsApp
+    window.open(whatsappUrl, '_blank');
+    
+    toast({
+      title: "Direct order initiated",
+      description: "You're being redirected to WhatsApp",
+    });
+  };
   
   // Get category name for display
   const getCategoryTitle = () => {
@@ -250,6 +275,15 @@ const Products = () => {
     
     return categoryMap[categoryFilter] || "Products";
   };
+
+  // Filter by category
+  const handleCategoryChange = (category: string | null) => {
+    if (category) {
+      setSearchParams({ category });
+    } else {
+      setSearchParams({});
+    }
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -257,6 +291,78 @@ const Products = () => {
       <main className="flex-grow pt-24">
         <div className="section-container">
           <h1 className="section-title">{getCategoryTitle()}</h1>
+          
+          {/* Category filters */}
+          <div className="flex flex-wrap items-center gap-2 mb-8">
+            <div className="flex items-center mr-2">
+              <Filter className="h-4 w-4 mr-1 text-forest" />
+              <span className="text-sm font-medium">Filter:</span>
+            </div>
+            <Button 
+              variant={!categoryFilter ? "default" : "outline"}
+              size="sm"
+              className={!categoryFilter ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange(null)}
+            >
+              All
+            </Button>
+            <Button 
+              variant={categoryFilter === "indoor" ? "default" : "outline"}
+              size="sm"
+              className={categoryFilter === "indoor" ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange("indoor")}
+            >
+              Indoor Plants
+            </Button>
+            <Button 
+              variant={categoryFilter === "outdoor" ? "default" : "outline"}
+              size="sm"
+              className={categoryFilter === "outdoor" ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange("outdoor")}
+            >
+              Outdoor Plants
+            </Button>
+            <Button 
+              variant={categoryFilter === "succulents" ? "default" : "outline"}
+              size="sm"
+              className={categoryFilter === "succulents" ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange("succulents")}
+            >
+              Succulents
+            </Button>
+            <Button 
+              variant={categoryFilter === "bonsai" ? "default" : "outline"}
+              size="sm"
+              className={categoryFilter === "bonsai" ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange("bonsai")}
+            >
+              Bonsai
+            </Button>
+            <Button 
+              variant={categoryFilter === "fertilizers" ? "default" : "outline"}
+              size="sm"
+              className={categoryFilter === "fertilizers" ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange("fertilizers")}
+            >
+              Fertilizers
+            </Button>
+            <Button 
+              variant={categoryFilter === "pots" ? "default" : "outline"}
+              size="sm"
+              className={categoryFilter === "pots" ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange("pots")}
+            >
+              Pots & Planters
+            </Button>
+            <Button 
+              variant={categoryFilter === "accessories" ? "default" : "outline"}
+              size="sm"
+              className={categoryFilter === "accessories" ? "bg-forest text-white" : "border-forest text-forest"}
+              onClick={() => handleCategoryChange("accessories")}
+            >
+              Accessories
+            </Button>
+          </div>
           
           {isLoading ? (
             // Loading skeleton
@@ -285,7 +391,8 @@ const Products = () => {
                     <ProductCard 
                       key={product.id} 
                       product={product} 
-                      onAddToCart={handleAddToCart} 
+                      onAddToCart={handleAddToCart}
+                      onDirectOrder={handleDirectOrder}
                     />
                   ))}
                 </div>
