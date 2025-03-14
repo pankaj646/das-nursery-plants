@@ -7,6 +7,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartItem, { CartProduct } from '@/components/cart/CartItem';
 import CartSummary from '@/components/cart/CartSummary';
+import WhatsAppButton from '@/components/shared/WhatsAppButton';
 import { toast } from '@/hooks/use-toast';
 
 const Cart = () => {
@@ -96,7 +97,7 @@ ${orderItems}
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar cartItemsCount={cartItems.length} />
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-serif font-semibold mb-8 flex items-center gap-2">
@@ -179,6 +180,7 @@ ${orderItems}
         </div>
       </main>
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Hero from '@/components/home/Hero';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import CategorySection from '@/components/home/CategorySection';
@@ -14,37 +14,49 @@ const Index = () => {
   // Cart state will be managed at the top level and passed down
   const [cart, setCart] = useState<CartProduct[]>([]);
   
+  useEffect(() => {
+    // Load cart from localStorage on initial render
+    const savedCart = localStorage.getItem('dasNurseryCart');
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+  
   const handleAddToCart = (product: Product) => {
     // Check if product already exists in cart
     const existingItem = cart.find(item => item.id === product.id);
     
     if (existingItem) {
       // Update quantity if already in cart
-      setCart(cart.map(item => 
+      const updatedCart = cart.map(item => 
         item.id === product.id 
           ? { ...item, quantity: item.quantity + 1 } 
           : item
-      ));
+      );
+      
+      setCart(updatedCart);
+      localStorage.setItem('dasNurseryCart', JSON.stringify(updatedCart));
+      
       toast({
         title: "Quantity updated",
         description: `${product.name} quantity has been increased`,
       });
     } else {
       // Add new item with quantity 1
-      setCart([...cart, { ...product, quantity: 1 }]);
+      const updatedCart = [...cart, { ...product, quantity: 1 }];
+      setCart(updatedCart);
+      localStorage.setItem('dasNurseryCart', JSON.stringify(updatedCart));
+      
+      toast({
+        title: "Added to cart",
+        description: `${product.name} has been added to your cart`,
+      });
     }
-    
-    // Save to localStorage
-    localStorage.setItem('dasNurseryCart', JSON.stringify(
-      existingItem 
-        ? cart.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item)
-        : [...cart, { ...product, quantity: 1 }]
-    ));
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar cartItemsCount={cart.length} />
       <main className="flex-grow pt-16">
         <Hero />
         <FeaturedProducts onAddToCart={handleAddToCart} />

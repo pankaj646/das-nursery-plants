@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -254,7 +253,7 @@ const Products = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar cartItemsCount={cart.length} />
       <main className="flex-grow pt-24">
         <div className="section-container">
           <h1 className="section-title">{getCategoryTitle()}</h1>
