@@ -3,51 +3,9 @@ import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import ProductCard, { Product } from '@/components/products/ProductCard';
-
-// Sample featured products data
-const featuredProducts: Product[] = [
-  {
-    id: 1,
-    name: "Areca Palm",
-    description: "Air-purifying indoor plant",
-    image: "https://images.unsplash.com/photo-1602923668104-8f9e03e77eff?q=80&w=1740&auto=format&fit=crop",
-    originalPrice: 799,
-    discountedPrice: 599,
-    discountPercentage: 25,
-    category: "indoor"
-  },
-  {
-    id: 2,
-    name: "Snake Plant",
-    description: "Low-maintenance, air-purifying plant",
-    image: "https://images.unsplash.com/photo-1620127682229-33388276e540?q=80&w=1587&auto=format&fit=crop",
-    originalPrice: 599,
-    discountedPrice: 499,
-    discountPercentage: 17,
-    category: "indoor"
-  },
-  {
-    id: 3,
-    name: "Money Plant",
-    description: "Decorative trailing houseplant",
-    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?q=80&w=1664&auto=format&fit=crop",
-    originalPrice: 349,
-    discountedPrice: 299,
-    discountPercentage: 14,
-    category: "indoor"
-  },
-  {
-    id: 4,
-    name: "Ceramic White Pot",
-    description: "Elegant pot for indoor plants",
-    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?q=80&w=1744&auto=format&fit=crop",
-    originalPrice: 499,
-    discountedPrice: 399,
-    discountPercentage: 20,
-    category: "pots"
-  }
-];
+import ProductCard from '@/components/products/ProductCard';
+import { getFeaturedProducts } from '@/config/products';
+import type { Product } from '@/config/products';
 
 interface FeaturedProductsProps {
   onAddToCart: (product: Product) => void;
@@ -55,6 +13,8 @@ interface FeaturedProductsProps {
 
 const FeaturedProducts = ({ onAddToCart }: FeaturedProductsProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  // Get featured products from our config file
+  const featuredProducts = getFeaturedProducts();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -72,6 +32,23 @@ const FeaturedProducts = ({ onAddToCart }: FeaturedProductsProps) => {
 
     return () => observer.disconnect();
   }, []);
+
+  const handleDirectOrder = (product: Product) => {
+    // Format direct order message for WhatsApp
+    const orderMessage = `
+🌿 I'd like to order:
+${product.name} - ${product.discountPercentage > 0 ? `~~₹${product.originalPrice}~~ ` : ''}₹${product.discountedPrice} ${product.discountPercentage > 0 ? `(${product.discountPercentage}% OFF)` : ''}
+
+Please provide details for delivery.
+    `;
+    
+    // Generate WhatsApp URL
+    const phoneNumber = '+919876543210'; // Replace with actual WhatsApp number
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(orderMessage.trim())}`;
+    
+    // Open WhatsApp
+    window.open(whatsappUrl, '_blank');
+  };
 
   return (
     <section id="featured-products" className="section-container">
@@ -94,6 +71,7 @@ const FeaturedProducts = ({ onAddToCart }: FeaturedProductsProps) => {
               key={product.id} 
               product={product} 
               onAddToCart={onAddToCart}
+              onDirectOrder={handleDirectOrder}
             />
           ))}
         </div>
