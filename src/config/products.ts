@@ -98,6 +98,66 @@ export const allProducts: Product[] = [
       benefits: "Air purification, easy to propagate"
     }
   },
+  {
+    id: 4,
+    name: "Money Plant",
+    description: "Decorative trailing houseplant",
+    image: "/images/products/money-plant.jpg",
+    originalPrice: 349,
+    discountedPrice: 299,
+    discountPercentage: 14,
+    category: "indoor",
+    careInfo: {
+      water: "Water when top soil is dry",
+      light: "Moderate indirect light",
+      care: "Prune regularly for bushy growth"
+    },
+    specs: {
+      type: "Indoor Plant",
+      size: "Small to Medium",
+      benefits: "Air purification, easy to propagate"
+    }
+  },
+  {
+    id: 5,
+    name: "Money Plant",
+    description: "Decorative trailing houseplant",
+    image: "/images/products/money-plant.jpg",
+    originalPrice: 349,
+    discountedPrice: 299,
+    discountPercentage: 14,
+    category: "indoor",
+    careInfo: {
+      water: "Water when top soil is dry",
+      light: "Moderate indirect light",
+      care: "Prune regularly for bushy growth"
+    },
+    specs: {
+      type: "Indoor Plant",
+      size: "Small to Medium",
+      benefits: "Air purification, easy to propagate"
+    }
+  },
+  {
+    id: 6,
+    name: "Money Plant",
+    description: "Decorative trailing houseplant",
+    image: "/images/products/money-plant.jpg",
+    originalPrice: 349,
+    discountedPrice: 299,
+    discountPercentage: 14,
+    category: "indoor",
+    careInfo: {
+      water: "Water when top soil is dry",
+      light: "Moderate indirect light",
+      care: "Prune regularly for bushy growth"
+    },
+    specs: {
+      type: "Indoor Plant",
+      size: "Small to Medium",
+      benefits: "Air purification, easy to propagate"
+    }
+  },
   // ... more products can be added here following the same format
 ];
 
